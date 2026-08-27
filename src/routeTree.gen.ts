@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -24,6 +26,16 @@ import { Route as AppCatalogRouteImport } from './routes/app.catalog'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAiInsightsRouteImport } from './routes/app.ai-insights'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -98,6 +110,8 @@ const AppAiInsightsRoute = AppAiInsightsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/signup': typeof SignupRoute
   '/app/ai-insights': typeof AppAiInsightsRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/catalog': typeof AppCatalogRoute
@@ -113,6 +127,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pricing': typeof PricingRoute
+  '/signup': typeof SignupRoute
   '/app/ai-insights': typeof AppAiInsightsRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/catalog': typeof AppCatalogRoute
@@ -130,6 +146,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/pricing': typeof PricingRoute
+  '/signup': typeof SignupRoute
   '/app/ai-insights': typeof AppAiInsightsRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/catalog': typeof AppCatalogRoute
@@ -148,6 +166,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/pricing'
+    | '/signup'
     | '/app/ai-insights'
     | '/app/analytics'
     | '/app/catalog'
@@ -163,6 +183,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/pricing'
+    | '/signup'
     | '/app/ai-insights'
     | '/app/analytics'
     | '/app/catalog'
@@ -179,6 +201,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/pricing'
+    | '/signup'
     | '/app/ai-insights'
     | '/app/analytics'
     | '/app/catalog'
@@ -196,10 +220,26 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  PricingRoute: typeof PricingRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -336,6 +376,8 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  PricingRoute: PricingRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
