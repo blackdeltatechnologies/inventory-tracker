@@ -45,7 +45,9 @@ const navLinks = [
   { label: "Features", href: "#features" },
   { label: "Solutions", href: "#solutions" },
   { label: "Analytics", href: "#analytics" },
+  { label: "Pricing", href: "/pricing" },
 ];
+
 
 const solutions = [
   {
@@ -473,9 +475,9 @@ function LandingPage() {
               Ready to take control of your inventory?
             </h2>
             <p className="mx-auto mt-4 max-w-md text-base text-background/60">
-              Explore Stackwise with sample data. No signup required.
+              Explore Stackwise with sample data — then create your own workspace when you're ready.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <button
                 type="button"
                 onClick={handleTryDemo}
@@ -484,7 +486,14 @@ function LandingPage() {
                 Try demo
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
+              <Link
+                to="/pricing"
+                className="inline-flex items-center gap-2 rounded-lg border border-background/30 px-5 py-2.5 text-base font-semibold text-background transition-colors hover:bg-background/10"
+              >
+                View pricing
+              </Link>
             </div>
+
           </RevealSection>
         </div>
       </section>

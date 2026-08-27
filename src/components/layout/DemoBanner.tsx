@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useDemo } from "@/hooks/useDemo";
 import { useRole } from "@/hooks/useRole";
-import { X, ChevronDown } from "lucide-react";
+import { X, ChevronDown, Sparkles } from "lucide-react";
+
 import type { UserRoleType } from "@/lib/roles";
 import {
   DropdownMenu,
