@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useDemo } from "@/hooks/useDemo";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useState, useEffect } from "react";
@@ -191,6 +191,7 @@ function StickyNav({ onTryDemo }: { onTryDemo: () => void }) {
               key={l.label}
               href={l.href}
               onClick={(e) => {
+                if (!l.href.startsWith("#")) return;
                 e.preventDefault();
                 document.querySelector(l.href)?.scrollIntoView({ behavior: "smooth" });
               }}
@@ -198,6 +199,7 @@ function StickyNav({ onTryDemo }: { onTryDemo: () => void }) {
             >
               {l.label}
             </a>
+
           ))}
         </div>
 
@@ -229,14 +231,16 @@ function StickyNav({ onTryDemo }: { onTryDemo: () => void }) {
               key={l.label}
               href={l.href}
               onClick={(e) => {
-                e.preventDefault();
                 setMobileOpen(false);
+                if (!l.href.startsWith("#")) return;
+                e.preventDefault();
                 document.querySelector(l.href)?.scrollIntoView({ behavior: "smooth" });
               }}
               className="block py-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {l.label}
             </a>
+
           ))}
           <button
             type="button"
