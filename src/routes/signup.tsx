@@ -203,13 +203,15 @@ function SignUpPage() {
           </form>
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            Just looking around?{" "}
-            <Link to="/" className="text-primary underline-offset-4 hover:underline">
-              Go back to the demo
+            Already have an account?{" "}
+            <Link to="/signin" className="text-primary underline-offset-4 hover:underline">
+              Sign in
             </Link>
           </p>
         </div>
+        )}
       </main>
+
     </div>
   );
 }
