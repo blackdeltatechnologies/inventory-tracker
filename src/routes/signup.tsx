@@ -98,7 +98,40 @@ function SignUpPage() {
       </header>
 
       <main className="flex flex-1 items-center justify-center px-4 py-12">
+        {sentTo ? (
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-card p-7 text-center shadow-sm"
+            data-testid="signup-confirm"
+          >
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <MailCheck className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="mt-4 text-xl font-semibold tracking-tight">Check your email to confirm</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              We sent a confirmation link to{" "}
+              <span className="font-medium text-foreground">{sentTo}</span>. Click it to activate
+              your workspace, then sign in.
+            </p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Nothing yet? Check your spam folder — the link can take a minute to arrive.
+            </p>
+            <Link
+              to="/signin"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:brightness-110"
+            >
+              Go to sign in
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSentTo(null)}
+              className="mt-3 text-xs text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Use a different email
+            </button>
+          </div>
+        ) : (
         <div className="w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-sm">
+
           <h1 className="text-xl font-semibold tracking-tight">Create your workspace</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Selected plan:{" "}
