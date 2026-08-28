@@ -160,9 +160,11 @@ function devServerFnErrorLogger() {
 }
 
 export default defineConfig(({ command }) => {
+  // Vercel sets VERCEL=1 during builds — emit a Vercel-target build there.
+  const isVercel = !!process.env.VERCEL;
   // Use Cloudflare Workers plugin for builds (produces worker output)
   // Skip for dev server (command=serve) since workerd runtime isn't available
-  const useCloudflare = command === "build";
+  const useCloudflare = command === "build" && !isVercel;
 
   return {
     server: {
