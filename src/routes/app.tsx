@@ -8,6 +8,8 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { ShortcutsHelpDialog } from "@/components/command/ShortcutsHelpDialog";
 import { PageTransition } from "@/components/shared/PageTransition";
 import { useDemo } from "@/hooks/useDemo";
+import { useAuth } from "@/hooks/useAuth";
+
 import { useRole } from "@/hooks/useRole";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { canAccessRoute } from "@/lib/route-guard";
@@ -20,9 +22,12 @@ export const Route = createFileRoute("/app")({
 function AppLayout() {
   const { isDemo } = useDemo();
   const { role } = useRole();
+  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [helpOpen, setHelpOpen] = useState(false);
+
+  const allowed = isDemo || isAuthenticated;
 
   // Global keyboard shortcuts
   useKeyboardShortcuts({ onHelpOpen: () => setHelpOpen(true) });
@@ -35,20 +40,21 @@ function AppLayout() {
     }
   }, [location.pathname, role, navigate, isDemo]);
 
-  // Demo guard — redirect to landing if not in demo
+  // Access guard — demo mode or a real session is required
   useEffect(() => {
-    if (!isDemo) {
-      navigate({ to: "/" });
+    if (!isLoading && !allowed) {
+      navigate({ to: "/signin", replace: true });
     }
-  }, [isDemo, navigate]);
+  }, [isLoading, allowed, navigate]);
 
-  if (!isDemo) {
+  if (!allowed) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground" />
       </div>
     );
   }
+
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">

@@ -23,6 +23,7 @@ import { QuickEntryMode } from "@/components/data/QuickEntryMode";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { useDemo } from "@/hooks/useDemo";
+import { useAuth } from "@/hooks/useAuth";
 import { useRole } from "@/hooks/useRole";
 import { PermissionGate } from "@/hooks/usePermissions";
 
@@ -45,16 +46,25 @@ export function Header() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
   
-  const { exitDemoMode } = useDemo();
+  const { isDemo, exitDemoMode } = useDemo();
   const { role } = useRole();
+  const { user, isAuthenticated, signOut } = useAuth();
   const navigate = useNavigate();
 
-  const displayName = "Demo Admin";
+  const displayName = isDemo
+    ? "Demo Admin"
+    : ((user?.user_metadata?.['full_name'] as string) || user?.email || "Account");
 
   const handleExit = async () => {
     await navigate({ to: "/" });
     exitDemoMode();
   };
+
+  const handleSignOut = async () => {
+    await navigate({ to: "/signin", replace: true });
+    await signOut();
+  };
+
 
   // CMD+K / Ctrl+K shortcut
   useEffect(() => {
@@ -116,10 +126,18 @@ export function Header() {
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleExit}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Exit demo
-          </DropdownMenuItem>
+          {isDemo ? (
+            <DropdownMenuItem onClick={handleExit}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Exit demo
+            </DropdownMenuItem>
+          ) : null}
+          {isAuthenticated ? (
+            <DropdownMenuItem onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
 

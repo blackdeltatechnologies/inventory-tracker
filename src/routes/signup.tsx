@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Package, ArrowLeft, Loader2 } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Package, ArrowLeft, Loader2, MailCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 const planLabels: Record<string, string> = {
@@ -38,24 +39,45 @@ export const Route = createFileRoute("/signup")({
 
 function SignUpPage() {
   const { plan } = Route.useSearch();
+  const { signUp, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isAuthenticated && !sentTo) navigate({ to: "/app/dashboard", replace: true });
+  }, [isAuthenticated, sentTo, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Account creation is wired up once the database connection is in place.
-    window.setTimeout(() => {
-      setSubmitting(false);
-      toast.info("Almost there", {
-        description:
-          "Account creation goes live as soon as the database is connected. Your details weren't stored.",
+    try {
+      const { needsConfirmation } = await signUp({
+        email,
+        password,
+        fullName: name,
+        company,
+        plan,
       });
-    }, 600);
+      if (needsConfirmation) {
+        setSentTo(email);
+      } else {
+        toast.success("Workspace created");
+        navigate({ to: "/app/dashboard", replace: true });
+      }
+    } catch (err) {
+      toast.error("Could not create your account", {
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
+
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
@@ -76,7 +98,40 @@ function SignUpPage() {
       </header>
 
       <main className="flex flex-1 items-center justify-center px-4 py-12">
+        {sentTo ? (
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-card p-7 text-center shadow-sm"
+            data-testid="signup-confirm"
+          >
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <MailCheck className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="mt-4 text-xl font-semibold tracking-tight">Check your email to confirm</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              We sent a confirmation link to{" "}
+              <span className="font-medium text-foreground">{sentTo}</span>. Click it to activate
+              your workspace, then sign in.
+            </p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Nothing yet? Check your spam folder — the link can take a minute to arrive.
+            </p>
+            <Link
+              to="/signin"
+              className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg transition-all hover:brightness-110"
+            >
+              Go to sign in
+            </Link>
+            <button
+              type="button"
+              onClick={() => setSentTo(null)}
+              className="mt-3 text-xs text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Use a different email
+            </button>
+          </div>
+        ) : (
         <div className="w-full max-w-md rounded-2xl border border-border bg-card p-7 shadow-sm">
+
           <h1 className="text-xl font-semibold tracking-tight">Create your workspace</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Selected plan:{" "}
@@ -148,13 +203,15 @@ function SignUpPage() {
           </form>
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            Just looking around?{" "}
-            <Link to="/" className="text-primary underline-offset-4 hover:underline">
-              Go back to the demo
+            Already have an account?{" "}
+            <Link to="/signin" className="text-primary underline-offset-4 hover:underline">
+              Sign in
             </Link>
           </p>
         </div>
+        )}
       </main>
+
     </div>
   );
 }
