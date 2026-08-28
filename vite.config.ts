@@ -184,7 +184,7 @@ export default defineConfig(({ command }) => {
       devClientErrorLogger(),
       devServerFnErrorLogger(),
       ...(useCloudflare ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
-      tanstackStart(isVercel ? { target: "vercel" } : {}),
+      tanstackStart(),
       viteReact(),
     ],
   };
