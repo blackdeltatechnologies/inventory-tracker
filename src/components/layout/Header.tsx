@@ -23,6 +23,7 @@ import { QuickEntryMode } from "@/components/data/QuickEntryMode";
 import { CommandPalette } from "@/components/command/CommandPalette";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { useDemo } from "@/hooks/useDemo";
+import { useAuth } from "@/hooks/useAuth";
 import { useRole } from "@/hooks/useRole";
 import { PermissionGate } from "@/hooks/usePermissions";
 
@@ -125,10 +126,18 @@ export function Header() {
             <Settings className="mr-2 h-4 w-4" />
             Settings
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleExit}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Exit demo
-          </DropdownMenuItem>
+          {isDemo ? (
+            <DropdownMenuItem onClick={handleExit}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Exit demo
+            </DropdownMenuItem>
+          ) : null}
+          {isAuthenticated ? (
+            <DropdownMenuItem onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
 
