@@ -1,8 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Package, ArrowLeft, Loader2 } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Package, ArrowLeft, Loader2, MailCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 const planLabels: Record<string, string> = {
@@ -38,24 +39,45 @@ export const Route = createFileRoute("/signup")({
 
 function SignUpPage() {
   const { plan } = Route.useSearch();
+  const { signUp, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (isAuthenticated && !sentTo) navigate({ to: "/app/dashboard", replace: true });
+  }, [isAuthenticated, sentTo, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // Account creation is wired up once the database connection is in place.
-    window.setTimeout(() => {
-      setSubmitting(false);
-      toast.info("Almost there", {
-        description:
-          "Account creation goes live as soon as the database is connected. Your details weren't stored.",
+    try {
+      const { needsConfirmation } = await signUp({
+        email,
+        password,
+        fullName: name,
+        company,
+        plan,
       });
-    }, 600);
+      if (needsConfirmation) {
+        setSentTo(email);
+      } else {
+        toast.success("Workspace created");
+        navigate({ to: "/app/dashboard", replace: true });
+      }
+    } catch (err) {
+      toast.error("Could not create your account", {
+        description: err instanceof Error ? err.message : "Please try again.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
+
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
