@@ -26,8 +26,8 @@ function useDemoMutation<TData>(
 
   const mutate = useCallback(
     (data: TData, opts?: { onSuccess?: () => void; onError?: (e: Error) => void }) => {
-      if (!isDemo || !demoStore) {
-        opts?.onError?.(new Error("Not in demo mode"));
+      if (!demoStore) {
+        opts?.onError?.(new Error("Workspace not loaded yet"));
         return;
       }
       setIsLoading(true);

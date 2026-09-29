@@ -18,7 +18,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   const { isDemo } = useDemo();
   const [demoRole, setDemoRole] = useState<UserRoleType>("admin");
 
-  const role: UserRoleType = isDemo ? demoRole : "requestor"; // stub: non-demo defaults to requestor
+  // Workspace owners are admins of their own workspace
+  const role: UserRoleType = isDemo ? demoRole : "admin";
 
   const value = useMemo<RoleContextValue>(() => {
     const permissions = getPermissionsForRole(role);

@@ -11,7 +11,7 @@ export function useAlertGenerator() {
   const ranRef = useRef(false);
 
   useEffect(() => {
-    if (!isDemo || !demoStore || ranRef.current) return;
+    if (!demoStore || ranRef.current) return;
     ranRef.current = true;
     generateStockAlerts(demoStore);
     generatePOAlerts(demoStore);

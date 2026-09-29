@@ -20,7 +20,7 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppLayout() {
-  const { isDemo } = useDemo();
+  const { isDemo, demoStore, workspaceStatus, workspaceError } = useDemo();
   const { role } = useRole();
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
@@ -47,13 +47,26 @@ function AppLayout() {
     }
   }, [isLoading, allowed, navigate]);
 
-  if (!allowed) {
+  if (!isDemo && workspaceStatus === "error" && !demoStore) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background p-6">
+        <div className="max-w-md space-y-3 text-center">
+          <h1 className="text-lg font-semibold text-foreground">We couldn't open your workspace</h1>
+          <p className="text-sm text-muted-foreground">{workspaceError}</p>
+          <button className="text-sm underline" onClick={() => window.location.reload()}>Try again</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!allowed || (!isDemo && !demoStore)) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground" />
       </div>
     );
   }
+
 
 
   return (

@@ -92,7 +92,7 @@ export function useApprovalActions({ items }: { items: Item[] }) {
   }
 
   function confirmApprove() {
-    if (!activeRequest || !isDemo || !demoStore) return;
+    if (!activeRequest || !demoStore) return;
     const err = checkStock(activeRequest.items, itemMap);
     if (err) { toast.error(err); return; }
 
@@ -116,7 +116,7 @@ export function useApprovalActions({ items }: { items: Item[] }) {
   }
 
   function confirmDecline() {
-    if (!activeRequest || !declineReason.trim() || !isDemo || !demoStore) return;
+    if (!activeRequest || !declineReason.trim() || !demoStore) return;
     const now = new Date().toISOString();
     setIsLoading(true);
     try {
@@ -136,7 +136,7 @@ export function useApprovalActions({ items }: { items: Item[] }) {
   }
 
   function confirmPartial() {
-    if (!activeRequest || !isDemo || !demoStore) return;
+    if (!activeRequest || !demoStore) return;
     const allZero = activeRequest.items.every((li) => (partialQtys[li.id] ?? 0) === 0);
     if (allZero) { toast.error("Approve at least one item quantity"); return; }
 
