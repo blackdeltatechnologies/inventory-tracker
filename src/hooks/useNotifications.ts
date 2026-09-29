@@ -11,7 +11,7 @@ interface QueryResult<T> {
 export function useNotifications(): QueryResult<Notification[]> {
   const { isDemo, demoStore, version } = useDemo();
   return useMemo(() => {
-    if (isDemo && demoStore) {
+    if (demoStore) {
       return { data: demoStore.getNotifications(), isLoading: false, error: null };
     }
     return { data: [] as Notification[], isLoading: false, error: null };
@@ -21,7 +21,7 @@ export function useNotifications(): QueryResult<Notification[]> {
 export function useUnreadCount(): number {
   const { isDemo, demoStore, version } = useDemo();
   return useMemo(() => {
-    if (isDemo && demoStore) return demoStore.getUnreadCount();
+    if (demoStore) return demoStore.getUnreadCount();
     return 0;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDemo, demoStore, version]);

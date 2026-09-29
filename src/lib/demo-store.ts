@@ -9,7 +9,11 @@ import type {
   Notification,
 } from "@/types/inventory";
 import { MovementType } from "@/types/inventory";
-import { generateSeedData, type SeedData } from "./demo/index";
+import { generateSeedData, DEFAULT_NOTIFICATION_PREFS, type SeedData } from "./demo/index";
+
+function emptyData(): SeedData {
+  return { categories: [], items: [], suppliers: [], locations: [], movements: [], purchaseOrders: [], requests: [], notifications: [], notificationPrefs: { ...DEFAULT_NOTIFICATION_PREFS } };
+}
 
 export interface ItemFilters {
   categoryId?: string;
@@ -48,8 +52,29 @@ export class DemoStore {
   private version = 0;
   private users: DemoUser[] = SEED_USERS.map((u) => ({ ...u }));
 
-  constructor() {
-    this.data = generateSeedData();
+  constructor(seed = true) {
+    this.data = seed ? generateSeedData() : emptyData();
+    if (!seed) this.users = [];
+  }
+
+  /** Serialize the whole workspace for persistence. */
+  toJSON() {
+    return {
+      data: this.data,
+      users: this.users,
+      reorderDefaults: this.reorderDefaults,
+      customFieldDefs: this.customFieldDefs,
+    };
+  }
+
+  /** Restore a workspace previously produced by toJSON(). */
+  load(json: unknown) {
+    if (!json || typeof json !== "object") return;
+    const j = json as Partial<ReturnType<DemoStore["toJSON"]>>;
+    if (j.data) this.data = { ...emptyData(), ...j.data };
+    if (j.users) this.users = j.users;
+    if (j.reorderDefaults) this.reorderDefaults = j.reorderDefaults;
+    if (j.customFieldDefs) this.customFieldDefs = j.customFieldDefs;
   }
 
   getVersion() {

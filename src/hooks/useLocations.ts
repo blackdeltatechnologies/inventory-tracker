@@ -41,7 +41,7 @@ export function useLocations() {
   const { isDemo, demoStore, version } = useDemo();
 
   return useMemo(() => {
-    if (isDemo && demoStore) {
+    if (demoStore) {
       return { data: [...demoStore.getLocations()], isLoading: false, error: null };
     }
     return { data: [] as Location[], isLoading: false, error: null };
